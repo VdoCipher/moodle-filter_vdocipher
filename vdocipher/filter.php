@@ -42,7 +42,7 @@ class filter_vdocipher extends moodle_text_filter {
 			$postData .= "&". $posts;
 		}
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
-		$url = "http://api.vdocipher.com/v2/$action/?$getData";
+		$url = "https://api.vdocipher.com/v2/$action/?$getData";
 		curl_setopt($curl, CURLOPT_URL,$url);
 		$html = curl_exec($curl);
 		if (!$html) {
