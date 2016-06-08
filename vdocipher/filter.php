@@ -32,7 +32,6 @@ class filter_vdocipher extends moodle_text_filter {
 		curl_setopt($curl, CURLOPT_FAILONERROR, true);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_VERBOSE, true);
 		curl_setopt($curl, CURLOPT_FAILONERROR, false);    
 		//curl_setopt($curl, CURLOPT_PROXY, "xx.xx.xx.xx:xxxx");
 
