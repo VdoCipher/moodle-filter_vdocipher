@@ -22,7 +22,7 @@
  
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->version   = 2015111000;
+$plugin->version   = 2017010700;
 $plugin->requires  = 2014051200;
 $plugin->cron      = 0;
 $plugin->component = 'filter_vdocipher';
