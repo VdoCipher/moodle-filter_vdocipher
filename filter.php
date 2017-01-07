@@ -5,20 +5,19 @@ class filter_vdocipher extends moodle_text_filter {
 	public function filter($text, array $options = array()){
 		self::$csk = get_config('filter_vdocipher', 'csk');
 		self::$watermark = get_config('filter_vdocipher', 'watermark');
-		return preg_replace_callback( '/\[vdo\s+([A-Za-z0-9\=\s]+)\]/' , function($matches) use ($csk){
+		return preg_replace_callback( '/\[vdo\s+([A-Za-z0-9\=\s\"\']+)\]/' , function($matches) {
 			if (is_null(self::$csk) || self::$csk === "") {
 				return "Plugin not set properly. Please enter API key.";
 			}
-			$this->access_key = $this->params['access_key'];
 			$attrs = array();
-			$output = preg_replace_callback( '/\b([a-zA-Z0-9]+)\=([A-Za-z0-9]+)\b/' , function($matches) use(&$attrs){
+			$output = preg_replace_callback( '/\b([a-zA-Z0-9]+)\=[\"\']*([A-Za-z0-9]+)[\"\']*\b/' , function($matches) use(&$attrs){
 					$attrs[$matches[1]] = $matches[2];
 				} , $matches[1]);
 			$params = array(
 				'video'=>$attrs['id'],
 			);
-			$height = $attrs['height'];
-			$width = $attrs['width'];
+			$height = (isset($attrs['height'])) ? $attrs['height'] : 480;
+			$width = (isset($attrs['width'])) ? $attrs['width'] : 720;
 
 			$anno = [];
 			if (!function_exists("eval_date")) {
