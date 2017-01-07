@@ -58,7 +58,7 @@ class filter_vdocipher extends moodle_text_filter {
 			if (!empty(self::$watermark)) {
 				global $USER;
 				$vdo_annotate_code = self::$watermark;
-				if ( !is_null($USER) ) {
+				if ( isset($USER) && !is_null($USER) ) {
 					$fullname = $USER->firstname . ' ' . $USER->middlename . ' ' . $USER->lastname;
 					$vdo_annotate_code = str_replace('{name}', $fullname . ' ', $vdo_annotate_code);
 					$vdo_annotate_code = str_replace('{email}', $USER->email , $vdo_annotate_code);
