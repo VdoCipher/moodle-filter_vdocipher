@@ -73,7 +73,7 @@ class filter_vdocipher extends moodle_text_filter {
                 }
                 $annotatecode = str_replace('{ip}', $_SERVER['REMOTE_ADDR'] , $annotatecode);
                 $annotatecode = preg_replace_callback('/\{date\.([^\}]+)\}/', "eval_date" , $annotatecode);
-                if(!isset($attrs['no_annotate'])) {
+                if (!isset($attrs['no_annotate'])) {
                     $anno = array("annotate" => $annotatecode);
                 }
             }
@@ -119,4 +119,3 @@ EOF;
         return $html;
     }
 }
-?>
