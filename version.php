@@ -13,15 +13,15 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with moodle-filter_vdocipher.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 /**
  * @package   filter_vdocipher
  * @copyright 2017, VdoCipher Media Solutions <info@vdocipher.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 defined('MOODLE_INTERNAL') || die();
- 
+
 $plugin->version   = 2017010701;
 $plugin->requires  = 2014051200;
 $plugin->cron      = 0;

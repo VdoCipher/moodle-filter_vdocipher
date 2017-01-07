@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 // Language string for filter/vdocipher.
 
 $string['filtername'] = 'VdoCipher';
