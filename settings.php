@@ -20,6 +20,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $settings->add(new admin_setting_configtext('filter_vdocipher/csk',
     get_string('csk', 'filter_vdocipher'),
     get_string('csk_desc', 'filter_vdocipher'), null, PARAM_NOTAGS, 32));
