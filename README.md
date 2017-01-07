@@ -1,5 +1,9 @@
-# moodle
-A moodle plugin to add vdocipher videos inside a moodle content
+# moodle-filter_vdoipher
+A moodle filter plugin to add download-protected videos from vdocipher inside any moodle content. This replaces shortcodes with embedded video player.
+
+You shall get an API key and and ids for each video from your vdocipher dashboard. This can be used to embed your videos inside any moodle content such as a page or an activity.
+
+**About VdoCipher:** VdoCipher is an online video streaming service for premium content. VdoCipher Video Plugin for Moodle ensures highest protection against content piracy. Encryption, Watermarking & Backend Authentication ensures that no downloader or plugin can download videos embedded using VdoCipher. This enables our customers to earn maximum revenues from their customers.  The video plugin is easy to use and you can integrate and start streaming in 10 minutes. This makes it the ideal choice for easily hosting premium video content like lecture vidoes, music or movies. VdoCipher provides a nice smooth moodle embed video player to have your viewers best video streaming experience. Multiple bitrates can be allowed on the moodle video player.
 
 
 ## Installation instructions
@@ -22,3 +26,14 @@ By default, the video player takes 1280X720 limited by local responsive styles. 
 ```
 [vdo id="_________" height="360" width="640"]
 ```
+
+
+## Supported moodle versions
+
+2.7 (2014051200) and later
+
+- tested upto 3.2
+
+## License
+
+GPL-3
