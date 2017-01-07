@@ -21,6 +21,8 @@ class filter_vdocipher extends moodle_text_filter {
 			);
 			$height = (isset($attrs['height'])) ? $attrs['height'] : 480;
 			$width = (isset($attrs['width'])) ? $attrs['width'] : 720;
+			if (substr($height, -2) !== 'px') $height .= 'px';
+			if (substr($width, -2) !== 'px') $width .= 'px';
 
 			$anno = [];
 			if (!function_exists("eval_date")) {
@@ -49,7 +51,7 @@ class filter_vdocipher extends moodle_text_filter {
 			}
 			$OTP = json_decode($OTP)->otp;
 			$output =  <<<EOF
-<div id="vdo$OTP" style="height:720px;width:1280px;max-width:100%;"></div>
+<div id="vdo$OTP" style="height:$height;width:$width;max-width:100%;"></div>
 	<script>
 	(function(v,i,d,e,o){v[o]=v[o]||{}; v[o].add = v[o].add || function V(a){ (v[o].d=v[o].d||[]).push(a);};
 	if(!v[o].l) { v[o].l=1*new Date(); a=i.createElement(d), m=i.getElementsByTagName(d)[0];
