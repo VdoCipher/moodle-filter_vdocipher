@@ -5,6 +5,9 @@ class filter_vdocipher extends moodle_text_filter {
 	public function filter($text, array $options = array()){
 		self::$csk = get_config('filter_vdocipher', 'csk');
 		self::$watermark = get_config('filter_vdocipher', 'watermark');
+		if (strpos($text, '[vdo ') === false) {
+			return $text;
+		}
 		return preg_replace_callback( '/\[vdo\s+([A-Za-z0-9\=\s\"\']+)\]/' , function($matches) {
 			if (is_null(self::$csk) || self::$csk === "") {
 				return "Plugin not set properly. Please enter API key.";
