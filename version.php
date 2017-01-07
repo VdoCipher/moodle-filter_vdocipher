@@ -16,15 +16,15 @@
  
 /**
  * @package   filter_vdocipher
- * @copyright 2014, Vibhav Sinha <v@vsinha.me>
+ * @copyright 2017, VdoCipher Media Solutions <info@vdocipher.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->version   = 2017010700;
+$plugin->version   = 2017010701;
 $plugin->requires  = 2014051200;
 $plugin->cron      = 0;
 $plugin->component = 'filter_vdocipher';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = 'v0.1';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = 'v1.0';
