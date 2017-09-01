@@ -33,7 +33,7 @@ class filter_vdocipher extends moodle_text_filter {
         self::$csk = get_config('filter_vdocipher', 'csk');
         self::$playerVersion = get_config('filter_vdocipher', 'playerVersion');
         if (!self::$playerVersion) {
-            self::$playerVersion = '1.2.0';
+            self::$playerVersion = '1.2.2';
         }
         self::$watermark = get_config('filter_vdocipher', 'watermark');
         if (strpos($text, '[vdo ') === false) {
