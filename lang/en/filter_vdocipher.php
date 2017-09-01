@@ -24,5 +24,8 @@ $string['filtername'] = 'VdoCipher';
 $string['csk'] = 'API Secret Key';
 $string['csk_desc'] = 'This is the secret key received from vdocipher. Check your account settings to obtain.';
 
+$string['version'] = 'Player version';
+$string['version_desc'] = 'This is the player version to load. e.g. 1.2.0';
+
 $string['watermark'] = 'Watermark JSON';
 $string['watermark_desc'] = '(Optional) Watermark to be applied to the videos';

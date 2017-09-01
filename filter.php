@@ -28,8 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 class filter_vdocipher extends moodle_text_filter {
     private static $csk;
     private static $watermark;
+    private static $playerVersion;
     public function filter($text, array $options = array()) {
         self::$csk = get_config('filter_vdocipher', 'csk');
+        self::$playerVersion = get_config('filter_vdocipher', 'playerVersion');
+        if (!self::$playerVersion) {
+            self::$playerVersion = '1.2.0';
+        }
         self::$watermark = get_config('filter_vdocipher', 'watermark');
         if (strpos($text, '[vdo ') === false) {
             return $text;
@@ -46,6 +51,7 @@ class filter_vdocipher extends moodle_text_filter {
             $params = array(
                 'video' => $attrs['id'],
             );
+            $videoId = $attrs['id'];
             $height = (isset($attrs['height'])) ? $attrs['height'] : 480;
             $width = (isset($attrs['width'])) ? $attrs['width'] : 720;
             if (substr($height, -2) !== 'px') {
@@ -82,7 +88,8 @@ class filter_vdocipher extends moodle_text_filter {
                 return "Video playback can not be authenticated.";
             }
             $otp = json_decode($otp)->otp;
-            $output = <<<EOF
+            if (self::$playerVersion === '0.5') {
+                $output = <<<EOF
 <div id="vdo$otp" style="height:$height;width:$width;max-width:100%;"></div>
     <script>
     (function(v,i,d,e,o){v[o]=v[o]||{}; v[o].add = v[o].add || function V(a){ (v[o].d=v[o].d||[]).push(a);};
@@ -94,6 +101,26 @@ class filter_vdocipher extends moodle_text_filter {
     });
 </script>
 EOF;
+            } else {
+                $playerVersion = self::$playerVersion;
+                $output = <<<EOF
+<div id="vdo$otp" style="height:$height;width:$width;max-width:100%;"></div>
+    <script>
+  (function(v,i,d,e,o){v[o]=v[o]||{}; v[o].add = v[o].add || function V(a){ (v[o].d=v[o].d||[]).push(a);};
+if(!v[o].l) { v[o].l=1*new Date(); a=i.createElement(d), m=i.getElementsByTagName(d)[0];
+a.async=1; a.src=e; m.parentNode.insertBefore(a,m);}
+})(window,document,"script","https://d1z78r8i505acl.cloudfront.net/playerAssets/$playerVersion/vdo.js","vdo");
+vdo.add({
+  otp: "$otp",
+  playbackInfo: btoa(JSON.stringify({
+    videoId: "$videoId"
+  })),
+  theme: "9ae8bbe8dd964ddc9bdb932cca1cb59a",
+  container: document.querySelector( "#vdo$otp" ),
+});
+	</script>
+EOF;
+            }
             return $output;
         }, $text );
     }
