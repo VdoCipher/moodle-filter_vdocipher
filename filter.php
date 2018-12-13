@@ -67,7 +67,7 @@ class filter_vdocipher extends moodle_text_filter
             if (!function_exists("eval_date")) {
                 function eval_date($matches)
                 {
-                    return current_time($matches[1]);
+                    return date($matches[1]);
                 }
             }
             if (!empty(self::$watermark)) {
