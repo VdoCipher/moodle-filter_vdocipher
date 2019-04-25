@@ -16,7 +16,7 @@
 
 /**
  * @package   filter_vdocipher
- * @copyright 2017, VdoCipher Media Solutions <info@vdocipher.com>
+ * @copyright 2019, VdoCipher Media Solutions <info@vdocipher.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,12 +30,17 @@ class filter_vdocipher extends moodle_text_filter
     private static $csk;
     private static $watermark;
     private static $playerVersion;
+    private static $playerTheme;
     public function filter($text, array $options = array())
     {
         self::$csk = get_config('filter_vdocipher', 'csk');
         self::$playerVersion = get_config('filter_vdocipher', 'playerVersion');
+        self::$playerTheme = get_config('filter_vdocipher', 'playerTheme');
         if (!self::$playerVersion) {
-            self::$playerVersion = '1.2.2';
+            self::$playerVersion = '1.6.10';
+        }
+        if (!self::$playerTheme) {
+            self::$playerTheme = '9ae8bbe8dd964ddc9bdb932cca1cb59a';
         }
         self::$watermark = get_config('filter_vdocipher', 'watermark');
         if (strpos($text, '[vdo ') === false) {
@@ -54,16 +59,17 @@ class filter_vdocipher extends moodle_text_filter
                 'video' => $attrs['id'],
             );
             $videoId = $attrs['id'];
-            $height = (isset($attrs['height'])) ? $attrs['height'] : 480;
-            $width = (isset($attrs['width'])) ? $attrs['width'] : 720;
-            if (substr($height, -2) !== 'px') {
+            $height = (isset($attrs['height'])) ? $attrs['height'] : 'auto';
+            $width = (isset($attrs['width'])) ? $attrs['width'] : 1280;
+            if ((substr($height, -2) !== 'px') && ($height !== 'auto') ) {
                 $height .= 'px';
             }
             if (substr($width, -2) !== 'px') {
                 $width .= 'px';
             }
+            $otp_post_array = [];
+            $otp_post_array["ttl"] = 300;
 
-            $anno = [];
             if (!function_exists("eval_date")) {
                 function eval_date($matches)
                 {
@@ -83,14 +89,16 @@ class filter_vdocipher extends moodle_text_filter
                 $annotatecode = str_replace('{ip}', $_SERVER['REMOTE_ADDR'], $annotatecode);
                 $annotatecode = preg_replace_callback('/\{date\.([^\}]+)\}/', "eval_date", $annotatecode);
                 if (!isset($attrs['no_annotate'])) {
-                    $anno = array("annotate" => $annotatecode);
+                    $otp_post_array["annotate"] = $annotatecode;
                 }
             }
-            $otp = $this->vdo_send("otp", $params, $anno);
-            if (is_null(json_decode($otp))) {
+
+            $otp_response = $this->vdo_otp($videoId, $otp_post_array);
+            $otp = $otp_response->otp;
+            $playbackInfo = $otp_response->playbackInfo;
+            if (is_null($otp)) {
                 return "Video playback can not be authenticated.";
             }
-            $otp = json_decode($otp)->otp;
             if (self::$playerVersion === '0.5') {
                 $output = <<<EOF
 <div id="vdo$otp" style="height:$height;width:$width;max-width:100%;"></div>
@@ -106,6 +114,7 @@ class filter_vdocipher extends moodle_text_filter
 EOF;
             } else {
                 $playerVersion = self::$playerVersion;
+                $playerTheme = self::$playerTheme;
                 $output = <<<EOF
 <div id="vdo$otp" style="height:$height;width:$width;max-width:100%;"></div>
     <script>
@@ -115,10 +124,8 @@ a.async=1; a.src=e; m.parentNode.insertBefore(a,m);}
 })(window,document,"script","https://d1z78r8i505acl.cloudfront.net/playerAssets/$playerVersion/vdo.js","vdo");
 vdo.add({
   otp: "$otp",
-  playbackInfo: btoa(JSON.stringify({
-    videoId: "$videoId"
-  })),
-  theme: "9ae8bbe8dd964ddc9bdb932cca1cb59a",
+  playbackInfo: "$playbackInfo",
+  theme: "$playerTheme",
   container: document.querySelector( "#vdo$otp" ),
 });
 	</script>
@@ -127,26 +134,32 @@ EOF;
             return $output;
         }, $text);
     }
-    private function vdo_send($action, $params, $posts = [])
+    private function vdo_otp($video, $otp_post_array = [])
     {
+        $client_key = self::$csk;
+
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_FAILONERROR, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_FAILONERROR, false);
-
-        $getdata = http_build_query($params);
         curl_setopt($curl, CURLOPT_POST, true);
-        $posts["clientSecretKey"] = self::$csk;
-        $postdata = http_build_query($posts, null, '&');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
-        $url = "https://api.vdocipher.com/v2/$action/?$getdata";
+        $headers = [
+            "Accept: application/json",
+            "Content-Type: application/json",
+            "Authorization: Apisecret {$client_key}"
+        ];
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $otp_post_json = json_encode($otp_post_array);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $otp_post_json);
+        $url = "https://dev.vdocipher.com/api/videos/$video/otp";
         curl_setopt($curl, CURLOPT_URL, $url);
         $html = curl_exec($curl);
         if (!$html) {
             echo curl_error($curl);
         }
         curl_close($curl);
-        return $html;
+
+        return json_decode($html);
     }
 }
