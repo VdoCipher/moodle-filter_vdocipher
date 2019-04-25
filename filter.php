@@ -31,13 +31,17 @@ class filter_vdocipher extends moodle_text_filter
     private static $watermark;
     private static $playerVersion;
     private static $playerTheme;
+    private static $width;
+    private static $height;
     public function filter($text, array $options = array())
     {
         self::$csk = get_config('filter_vdocipher', 'csk');
         self::$playerVersion = get_config('filter_vdocipher', 'playerVersion');
         self::$playerTheme = get_config('filter_vdocipher', 'playerTheme');
+        self::$width = get_config('filter_vdocipher', 'width');
+        self::$height = get_config('filter_vdocipher', 'height');
         if (!self::$playerVersion) {
-            self::$playerVersion = '1.6.10';
+            self::$playerVersion = '1.x';
         }
         if (!self::$playerTheme) {
             self::$playerTheme = '9ae8bbe8dd964ddc9bdb932cca1cb59a';
@@ -55,18 +59,29 @@ class filter_vdocipher extends moodle_text_filter
             $output = preg_replace_callback($regex, function ($matches) use (&$attrs) {
                 $attrs[$matches[1]] = $matches[2];
             }, $matches[1]);
-            $params = array(
-                'video' => $attrs['id'],
-            );
+
             $videoId = $attrs['id'];
-            $height = (isset($attrs['height'])) ? $attrs['height'] : 'auto';
-            $width = (isset($attrs['width'])) ? $attrs['width'] : 1280;
-            if ((substr($height, -2) !== 'px') && ($height !== 'auto') ) {
-                $height .= 'px';
+
+            if (!self::$width) {
+                $setting_width = '720';
+            } else {
+                $setting_width = self::$width;
             }
+            if (!self::$height) {
+                $setting_height = auto;
+            } else {
+                $setting_height = self::$height;
+            }
+
+            $width = (isset($attrs['width'])) ? $attrs['width'] : $setting_width;
+            $height = (isset($attrs['height'])) ? $attrs['height'] : $setting_height;
             if (substr($width, -2) !== 'px') {
                 $width .= 'px';
             }
+            if ((substr($height, -2) !== 'px') && ($height !== 'auto') ) {
+                $height .= 'px';
+            }
+
             $otp_post_array = [];
             $otp_post_array["ttl"] = 300;
 

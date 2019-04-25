@@ -32,10 +32,28 @@ $settings->add(new admin_setting_configtext(
 ));
 
 $settings->add(new admin_setting_configtext(
+    'filter_vdocipher/width',
+    get_string('width', 'filter_vdocipher'),
+    get_string('width_desc', 'filter_vdocipher'),
+    '720',
+    PARAM_NOTAGS,
+    32
+));
+
+$settings->add(new admin_setting_configtext(
+    'filter_vdocipher/height',
+    get_string('height', 'filter_vdocipher'),
+    get_string('height_desc', 'filter_vdocipher'),
+    'auto',
+    PARAM_NOTAGS,
+    32
+));
+
+$settings->add(new admin_setting_configtext(
     'filter_vdocipher/playerVersion',
     get_string('playerVersion', 'filter_vdocipher'),
     get_string('playerVersion_desc', 'filter_vdocipher'),
-    '1.6.10',
+    '1.x',
     PARAM_NOTAGS,
     32
 ));
