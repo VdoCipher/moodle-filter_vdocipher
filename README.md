@@ -49,6 +49,7 @@ An example code using the above variable tokens:
 
 ```
 [ Check example video for the above code here ]( https://www.vdocipher.com/blog/2014/12/add-text-to-videos-with-watermark/ )
+[Add player themes ]( https://www.vdocipher.com/blog/2018/10/video-player-themes/ )
 
 ## Support
 
@@ -59,7 +60,7 @@ Send an email to [support@vdocipher.com](mailto:support@vdocipher.com )
 
 2.7 (2014051200) and later
 
-- tested upto 3.2
+- tested upto 3.6
 
 ## License
 

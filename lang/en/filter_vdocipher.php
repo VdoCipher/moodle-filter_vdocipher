@@ -24,8 +24,18 @@ $string['filtername'] = 'VdoCipher';
 $string['csk'] = 'API Secret Key';
 $string['csk_desc'] = 'This is the secret key received from vdocipher. Check your account settings to obtain.';
 
+$string['width'] = 'Player Width';
+$string['width_desc'] = '';
+
+$string['height'] = 'Player Height';
+$string['height_desc'] = 'Setting Height to auto preserves the video aspect ratio';
+
 $string['playerVersion'] = 'Player version';
-$string['playerVersion_desc'] = 'This is the player version to load. e.g. 1.2.2';
+$string['playerVersion_desc'] = 'Setting to 1.x uses the latest and recommended video player version';
+
+$string['playerTheme'] = 'Player Theme';
+$string['playerTheme_desc'] = 'This is the player theme. Available player themes are listed in the  <a href="https://www.vdocipher.com/blog/2018/10/video-player-themes/" target="_blank">Custom player skin page</a>';
 
 $string['watermark'] = 'Watermark JSON';
-$string['watermark_desc'] = '(Optional) Watermark to be applied to the videos';
+$string['watermark_desc'] = '(Optional) Watermark to be applied to the videos. For details on writing the annotation code <a href="https://www.vdocipher.com/blog/2014/12/add-text-to-videos-with-watermark/" target="_blank"> check this out. </a>';
+
