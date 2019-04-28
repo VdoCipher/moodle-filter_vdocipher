@@ -22,13 +22,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$settings->add(new admin_setting_configtext(
+$settings->add(new admin_setting_configpasswordunmask(
     'filter_vdocipher/csk',
     get_string('csk', 'filter_vdocipher'),
     get_string('csk_desc', 'filter_vdocipher'),
     null,
     PARAM_NOTAGS,
-    32
+    64
 ));
 
 $settings->add(new admin_setting_configtext(
