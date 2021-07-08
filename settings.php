@@ -26,9 +26,7 @@ $settings->add(new admin_setting_configpasswordunmask(
     'filter_vdocipher/csk',
     get_string('csk', 'filter_vdocipher'),
     get_string('csk_desc', 'filter_vdocipher'),
-    null,
-    PARAM_NOTAGS,
-    64
+    null
 ));
 
 $settings->add(new admin_setting_configtext(
@@ -59,13 +57,21 @@ $settings->add(new admin_setting_configtext(
 ));
 
 $settings->add(new admin_setting_configtext(
+    'filter_vdocipher/speedOptions',
+    get_string('speedOptions', 'filter_vdocipher'),
+    get_string('speedOptions_desc', 'filter_vdocipher'),
+    '',
+    PARAM_NOTAGS,
+    32
+));
+
+$settings->add(new admin_setting_configtext(
     'filter_vdocipher/playerTheme',
     get_string('playerTheme', 'filter_vdocipher'),
     get_string('playerTheme_desc', 'filter_vdocipher'),
     '9ae8bbe8dd964ddc9bdb932cca1cb59a',
     PARAM_NOTAGS,
-    64,
-    2
+    64
 ));
 
 $settings->add(new admin_setting_configtextarea(
