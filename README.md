@@ -60,7 +60,7 @@ Send an email to [support@vdocipher.com](mailto:support@vdocipher.com )
 
 2.7 (2014051200) and later
 
-- tested upto 3.6
+- tested upto 4.0
 
 ## License
 
