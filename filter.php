@@ -68,7 +68,7 @@ class filter_vdocipher extends moodle_text_filter
                 $setting_width = self::$width;
             }
             if (!self::$height) {
-                $setting_height = auto;
+                $setting_height = 'auto';
             } else {
                 $setting_height = self::$height;
             }
