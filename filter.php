@@ -33,6 +33,7 @@ class filter_vdocipher extends moodle_text_filter
     private static $playerTheme;
     private static $width;
     private static $height;
+    private static $speedOptions;
     public function filter($text, array $options = array())
     {
         self::$csk = get_config('filter_vdocipher', 'csk');
@@ -47,6 +48,7 @@ class filter_vdocipher extends moodle_text_filter
             self::$playerTheme = '9ae8bbe8dd964ddc9bdb932cca1cb59a';
         }
         self::$watermark = get_config('filter_vdocipher', 'watermark');
+        self::$speedOptions = get_config('filter_vdocipher', 'speedOptions');
         if (strpos($text, '[vdo ') === false) {
             return $text;
         }
@@ -146,9 +148,36 @@ vdo.add({
 	</script>
 EOF;
             }
+            if (self::validSpeed()) {
+                $speedOptions = self::$speedOptions;
+                $output .= <<<EOF
+<script>
+    function onVdoCipherAPIReady() {
+      var allVideos = vdo.getObjects();
+      var video_ = allVideos[allVideos.length - 1];
+      video_.addEventListener('load', function () {
+        video_.availablePlaybackRates = [$speedOptions]
+      });
+    }
+</script>
+EOF;
+
+            }
             return $output;
         }, $text);
     }
+
+    private static function validSpeed() {
+        if (!self::$speedOptions) return false;
+        $speeds = explode(',', self::$speedOptions);
+        foreach ($speeds as $speed) {
+            if (!is_numeric($speed)) return false;
+            $floatSpeed = floatval($speed);
+            if ($floatSpeed < 0.2 || $floatSpeed > 2.5) return false;
+        }
+        return true;
+    }
+
     private function vdo_otp($video, $otp_post_array = [])
     {
         $client_key = self::$csk;
