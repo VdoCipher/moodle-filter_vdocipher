@@ -132,6 +132,7 @@ EOF;
                 $playerTheme = self::$playerTheme;
                 $uniq = 'u' . rand();
                 $output = <<<EOF
+<script src="https://player.vdocipher.com/v2/api.js"></script>
 <iframe
   src="https://player.vdocipher.com/v2/?otp=$otp&playbackInfo=$playbackInfo"
   id="$uniq"
