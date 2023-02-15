@@ -34,7 +34,7 @@ $string['playerVersion'] = 'Player version';
 $string['playerVersion_desc'] = 'Setting to 1.x uses the latest and recommended video player version';
 
 $string['playerTheme'] = 'Player Theme';
-$string['playerTheme_desc'] = 'This is the player theme. Available player themes are listed in the  <a href="https://www.vdocipher.com/blog/2018/10/video-player-themes/" target="_blank">Custom player skin page</a>';
+$string['playerTheme_desc'] = 'This is the player theme.';
 
 $string['watermark'] = 'Watermark JSON';
 $string['watermark_desc'] = '(Optional) Watermark to be applied to the videos. For details on writing the annotation code <a href="https://www.vdocipher.com/blog/2014/12/add-text-to-videos-with-watermark/" target="_blank"> check this out. </a>';
