@@ -130,20 +130,32 @@ EOF;
             } else {
                 $playerVersion = self::$playerVersion;
                 $playerTheme = self::$playerTheme;
+                $uniq = 'u' . rand();
                 $output = <<<EOF
-<div id="vdo$otp" style="height:$height;width:$width;max-width:100%;"></div>
-    <script>
-  (function(v,i,d,e,o){v[o]=v[o]||{}; v[o].add = v[o].add || function V(a){ (v[o].d=v[o].d||[]).push(a);};
-if(!v[o].l) { v[o].l=1*new Date(); a=i.createElement(d), m=i.getElementsByTagName(d)[0];
-a.async=1; a.src=e; m.parentNode.insertBefore(a,m);}
-})(window,document,"script","https://d1z78r8i505acl.cloudfront.net/playerAssets/$playerVersion/vdo.js","vdo");
-vdo.add({
-  otp: "$otp",
-  playbackInfo: "$playbackInfo",
-  theme: "$playerTheme",
-  container: document.querySelector( "#vdo$otp" ),
-});
-	</script>
+<iframe
+  src="https://player.vdocipher.com/v2/?otp=$otp&playbackInfo=$playbackInfo"
+  id="$uniq"
+  style="height:$height;width:$width;max-width:100%;border:0;display: block;"
+  allow="encrypted-media"
+  allowfullscreen
+></iframe>
+<script>
+(function() {
+    const iframe = document.querySelector('#$uniq')
+    const player = VdoPlayer.getInstance(iframe);
+    player.video.addEventListener('loadstart', async () => {
+      const aspectRatio = (await player.api.getMetaData()).aspectRatio;
+      if (iframe.style.height === 'auto' && iframe.style.width.endsWith('px')) {
+          if (CSS.supports('aspect-ratio', 1)) {
+              iframe.style.aspectRatio = aspectRatio;
+          } else {
+              const offsetWidth = iframe.offsetWidth;
+              iframe.style.height = Math.round(offsetWidth / aspectRatio) + 'px';
+          }
+      }
+    });
+})();
+</script>
 EOF;
             }
             return $output;
