@@ -22,20 +22,52 @@ defined('MOODLE_INTERNAL') || die();
 $string['filtername'] = 'VdoCipher';
 
 $string['csk'] = 'API Secret Key';
-$string['csk_desc'] = 'This is the secret key received from vdocipher. Check your account settings to obtain.';
+$string['csk_desc'] = '';
 
-$string['width'] = 'Player Width';
+$string['width'] = 'Default Width';
 $string['width_desc'] = '';
 
-$string['height'] = 'Player Height';
-$string['height_desc'] = 'Setting Height to auto preserves the video aspect ratio';
+$string['height'] = 'Default Height';
+$string['height_desc'] = 'Can be either "auto" or a number. Set to "auto" height and max width for responsive layout.';
 
-$string['playerVersion'] = 'Player version';
-$string['playerVersion_desc'] = 'Setting to 1.x uses the latest and recommended video player version';
+$string['playerVersion'] = 'Player Version';
+$string['playerVersion_desc'] =
+'<details class="vdo_docs">
+    <summary>How to choose player version?</summary>
+    <div>
+        <p>
+            The new version of the player is v2. It is the second version of our HTML5 player. There are many improvements to player including
+        </p>
+        <ul>
+            <li>Smaller file size resulting in faster load times</li>
+            <li>Improved layout on small screen devices</li>
+            <li>Work better with webpage styles</li>
+            <li>Improved progress bar function with drag function</li>
+            <li>Auto resume from last watched position</li>
+            <li>Greater customisation capabilities, chapters, playlists and other features coming soon.</li>
+        </ul>
+        <p>We will continue to support v1 player without any planned end-of-support. We will continue to make security and maintenance fixes to ensure that v1 plays across browsers as much as possible.</p>
+        <p>The looks of v2 is noticeably different, and we wanted to give you the choice in making the transition at your convenience. If you have to choose, we recommend to use player v2 because of all the improvements.</p>
+        <p>If you have any questions or feedback or feature suggestions about the new player versions, we love to hear about it. Go to the support section on the sidebar and send us a ticket.</p>
+    </div>
+</details>
+<br>';
 
-$string['playerTheme'] = 'Player Theme';
-$string['playerTheme_desc'] = 'This is the player theme.';
+$string['playerTheme'] = 'Player ID';
+$string['playerTheme_desc'] = 'Leave this blank for using default theme. Player id can also be specified in the shortcode if needed to be different for different videos.';
 
-$string['watermark'] = 'Watermark JSON';
-$string['watermark_desc'] = '(Optional) Watermark to be applied to the videos. For details on writing the annotation code <a href="https://www.vdocipher.com/blog/2014/12/add-text-to-videos-with-watermark/" target="_blank"> check this out. </a>';
-
+$string['watermark'] = 'Watermark Statement';
+$string['watermark_desc'] = '(Optional) Watermark to be applied to the videos. For details on writing the annotation code <a href="https://www.vdocipher.com/blog/2014/12/add-text-to-videos-with-watermark/" target="_blank"> check this out. </a>
+          <p class="description" style="margin-left:20px; position: relative">
+          <span style="color:purple"><b>Sample Code for Dynamic Watermark</b></span><br/>
+          [{\'type\':\'rtext\', \'text\':\' {name}\', \'alpha\':\'0.60\', \'color\':\'0xFF0000\',\'size\':\'15\',\'interval\':\'5000\'}] <br/>
+          <span style="color:purple"><b>Sample Code for Static Watermark</b></span><br/>
+          [{\'type\':\'text\', \'text\':\'{ip}\', \'alpha\':\'0.5\' , \'x\':\'10\', \'y\':\'100\', \'color\':\'0xFF0000\', \'size\':\'12\'}] <br/>
+          </p>
+          </div>
+          <p class="description" id="vdojsonvalidator"></p>
+          <p class="description">
+                Leave this text blank in case you do not need watermark over all
+                videos.
+          </p>
+';

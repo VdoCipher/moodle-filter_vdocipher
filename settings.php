@@ -22,6 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/** @var $settings */
 $settings->add(new admin_setting_configpasswordunmask(
     'filter_vdocipher/csk',
     get_string('csk', 'filter_vdocipher'),
@@ -35,7 +36,7 @@ $settings->add(new admin_setting_configtext(
     'filter_vdocipher/width',
     get_string('width', 'filter_vdocipher'),
     get_string('width_desc', 'filter_vdocipher'),
-    '720',
+    '1280',
     PARAM_NOTAGS,
     32
 ));
@@ -49,11 +50,12 @@ $settings->add(new admin_setting_configtext(
     32
 ));
 
-$settings->add(new admin_setting_configtext(
+$settings->add(new admin_setting_configselect(
     'filter_vdocipher/playerVersion',
     get_string('playerVersion', 'filter_vdocipher'),
     get_string('playerVersion_desc', 'filter_vdocipher'),
-    '1.x',
+    '2.x',
+    array( '1.x' =>'v1', '2.x' => 'v2 (Recommended)'),
     PARAM_NOTAGS,
     32
 ));
@@ -62,7 +64,7 @@ $settings->add(new admin_setting_configtext(
     'filter_vdocipher/playerTheme',
     get_string('playerTheme', 'filter_vdocipher'),
     get_string('playerTheme_desc', 'filter_vdocipher'),
-    '9ae8bbe8dd964ddc9bdb932cca1cb59a',
+    '',
     PARAM_NOTAGS,
     64,
     2
@@ -74,6 +76,6 @@ $settings->add(new admin_setting_configtextarea(
     get_string('watermark_desc', 'filter_vdocipher'),
     null,
     PARAM_NOTAGS,
-    100,
-    10
+    64,
+    8
 ));

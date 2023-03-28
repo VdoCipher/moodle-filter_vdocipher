@@ -40,45 +40,48 @@ class filter_vdocipher extends moodle_text_filter
         self::$playerTheme = get_config('filter_vdocipher', 'playerTheme');
         self::$width = get_config('filter_vdocipher', 'width');
         self::$height = get_config('filter_vdocipher', 'height');
+        self::$watermark = get_config('filter_vdocipher', 'watermark');
+        // by default, use player version 2
         if (!self::$playerVersion) {
-            self::$playerVersion = '1.x';
+            self::$playerVersion = '2.x';
         }
-        if (!self::$playerTheme) {
+        // if using player version 1 but theme is not available then use the default theme
+        if (self::$playerVersion === '1.x' && strlen(self::$playerTheme) !== 32) {
             self::$playerTheme = '9ae8bbe8dd964ddc9bdb932cca1cb59a';
         }
-        self::$watermark = get_config('filter_vdocipher', 'watermark');
+        if (is_null(self::$csk) || empty(self::$csk)) {
+            return 'Plugin not configured. API Key missing.';
+        } else if (strlen(self::$csk) !== 64) {
+            return 'Invalid API Key.';
+        }
         if (strpos($text, '[vdo ') === false) {
+            // the text does not contain shortcode. skip this
             return $text;
         }
         return preg_replace_callback('/\[vdo\s+([A-Za-z0-9\=\s\"\']+)\]/', function ($matches) {
-            if (is_null(self::$csk) || self::$csk === "") {
-                return "Plugin not set properly. Please enter API key.";
-            }
             $attrs = array();
             $regex = '/\b([a-zA-Z0-9]+)\=[\"\']*([A-Za-z0-9]+)[\"\']*\b/';
             $output = preg_replace_callback($regex, function ($matches) use (&$attrs) {
                 $attrs[$matches[1]] = $matches[2];
             }, $matches[1]);
+            // now, we have the shortcode attributes saved in $attrs
 
-            $videoId = $attrs['id'];
-
-            if (!self::$width) {
-                $setting_width = '720';
+            if (!isset($attrs['id'])) {
+                return "Required argument id for embedded video not found.";
+            } elseif (strlen($attrs['id']) !== 32) {
+                return "Invalid Video Id.";
             } else {
-                $setting_width = self::$width;
-            }
-            if (!self::$height) {
-                $setting_height = 'auto';
-            } else {
-                $setting_height = self::$height;
+                $videoId = $attrs['id'];
             }
 
-            $width = (isset($attrs['width'])) ? $attrs['width'] : $setting_width;
-            $height = (isset($attrs['height'])) ? $attrs['height'] : $setting_height;
+            $setting_width = self::$width ?: '1280';
+            $setting_height = self::$height ?: 'auto';
+            $width = isset($attrs['width']) ? $attrs['width'] : $setting_width;
+            $height = isset($attrs['height']) ? $attrs['height'] : $setting_height;
             if (substr($width, -2) !== 'px') {
                 $width .= 'px';
             }
-            if ((substr($height, -2) !== 'px') && ($height !== 'auto') ) {
+            if ((substr($height, -2) !== 'px') && ($height !== 'auto')) {
                 $height .= 'px';
             }
 
@@ -109,25 +112,15 @@ class filter_vdocipher extends moodle_text_filter
             }
 
             $otp_response = $this->vdo_otp($videoId, $otp_post_array);
+            if (isset($otp_response->error)) {
+                return $otp_response->error;
+            }
             $otp = $otp_response->otp;
             $playbackInfo = $otp_response->playbackInfo;
             if (is_null($otp)) {
                 return "Video playback can not be authenticated.";
             }
-            if (self::$playerVersion === '0.5') {
-                $output = <<<EOF
-<div id="vdo$otp" style="height:$height;width:$width;max-width:100%;"></div>
-    <script>
-    (function(v,i,d,e,o){v[o]=v[o]||{}; v[o].add = v[o].add || function V(a){ (v[o].d=v[o].d||[]).push(a);};
-    if(!v[o].l) { v[o].l=1*new Date(); a=i.createElement(d), m=i.getElementsByTagName(d)[0];
-    a.async=1; a.src=e; m.parentNode.insertBefore(a,m);}
-    })(window,document,'script','//de122v0opjemw.cloudfront.net/vdo.js','vdo');
-    vdo.add({
-        o: "$otp",
-    });
-</script>
-EOF;
-            } else {
+            if (self::$playerVersion === '1.x') {
                 $playerVersion = self::$playerVersion;
                 $playerTheme = self::$playerTheme;
                 $output = <<<EOF
@@ -145,35 +138,88 @@ vdo.add({
 });
 	</script>
 EOF;
+            } else {
+                $uniq = 'u' . rand();
+                $url = "https://player.vdocipher.com/v2/?otp=$otp&playbackInfo=$playbackInfo";
+                $playerId = self::$playerTheme;
+                if (strlen($playerId) === 16) {
+                    $url .= "&player=$playerId";
+                }
+                if (isset($attrs['autoplay']) && $attrs['autoplay']) {
+                    $url .= "&autoplay=true";
+                }
+                if (isset($attrs['loop']) && $attrs['loop']) {
+                    $url .= "&loop=true";
+                }
+                if (isset($attrs['controls']) && in_array($attrs['controls'], ['off', 'native'])) {
+                    $url .= "&controls=" . $attrs['controls'];
+                }
+                if (isset($attrs['cc_language']) && $attrs['cc_language']) {
+                    $url .= "&ccLanguage=" . $attrs['cc_language'];
+                }
+                if (isset($attrs['litemode']) && $attrs['litemode'] === 'true') {
+                    $url .= "&litemode=true";
+                }
+                $output = <<<END
+<script src="https://player.vdocipher.com/v2/api.js"></script>
+<iframe
+  src="$url"
+  id="$uniq"
+  style="height:$height;width:$width;max-width:100%;border:0;display: block;"
+  allow="encrypted-media"
+  allowfullscreen
+></iframe>
+<script>
+(function() {
+  const iframe = document.querySelector('#$uniq');
+  const player = VdoPlayer.getInstance(iframe);
+  const isAutoHeight = () => iframe.style.height === 'auto' && iframe.style.width.endsWith('px');
+  const setAspectRatio = (ratio) => {
+      iframe.style.maxHeight = '100vh';
+      if (CSS.supports('aspect-ratio', 1)) {
+          iframe.style.aspectRatio = ratio;
+      } else {
+          const offsetWidth = iframe.offsetWidth;
+          iframe.style.height = Math.round(offsetWidth / ratio) + 'px';
+      }
+  }
+  if (isAutoHeight()) {
+    if (iframe.src.includes('litemode'))  {
+       setAspectRatio(16/9);
+    }
+    player.video.addEventListener('loadstart', async () => {
+      const aspectRatio = (await player.api.getMetaData()).aspectRatio;
+      setAspectRatio(aspectRatio);
+    });
+  }
+})();
+</script>
+END;
             }
             return $output;
         }, $text);
     }
-    private function vdo_otp($video, $otp_post_array = [])
+
+    private function vdo_otp($video, $otpPostParams = [])
     {
         $client_key = self::$csk;
-
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_FAILONERROR, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POST, true);
+        $url = "https://dev.vdocipher.com/api/videos/$video/otp";
+        $postParams = json_encode($otpPostParams);
         $headers = [
             "Accept: application/json",
             "Content-Type: application/json",
             "Authorization: Apisecret {$client_key}"
         ];
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        $otp_post_json = json_encode($otp_post_array);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $otp_post_json);
-        $url = "https://dev.vdocipher.com/api/videos/$video/otp";
-        curl_setopt($curl, CURLOPT_URL, $url);
-        $html = curl_exec($curl);
-        if (!$html) {
-            echo curl_error($curl);
+        $options = [
+            'CURLOPT_HTTPHEADER' => $headers,
+            'CURLOPT_FAILONERROR' => true,
+            'CURLOPT_RETURNTRANSFER' => true,
+        ];
+        $curl = new \curl();
+        $response = $curl->post($url, $postParams, $options);
+        if ($curl->error) {
+            return (object)['error' => $curl->error];
         }
-        curl_close($curl);
-
-        return json_decode($html);
+        return json_decode($response);
     }
 }
