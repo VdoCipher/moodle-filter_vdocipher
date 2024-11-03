@@ -16,7 +16,7 @@
 
 /**
  * @package   filter_vdocipher
- * @copyright 2019, VdoCipher Media Solutions <info@vdocipher.com>
+ * @copyright 2024, VdoCipher Media Solutions <info@vdocipher.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
